@@ -1,4 +1,4 @@
-﻿namespace _40kScraper.Console.Models;
+﻿namespace CitadelScraper.Models;
 
 public class Record
 {

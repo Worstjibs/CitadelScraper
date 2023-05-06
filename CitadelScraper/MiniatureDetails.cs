@@ -1,7 +1,6 @@
-﻿using _40kScraper.Console;
-using _40kScraper.Console.Models;
+﻿using CitadelScraper.Models;
 
-namespace _40kScraper;
+namespace CitadelScraper;
 
 public class MiniatureDetails
 {
@@ -10,7 +9,7 @@ public class MiniatureDetails
     public string Url { get; set; } = string.Empty;
 
     public ProductImage[] Images = Array.Empty<ProductImage>();
-    public PaintEffect[] PaintEffects { get; set; } = Array.Empty<PaintEffect>();
+    public PaintMethods? PaintMethods { get; set; }
 
     public override string? ToString()
     {
