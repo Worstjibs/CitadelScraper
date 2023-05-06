@@ -10,7 +10,7 @@ public enum Faction : uint
     [Government(Government.SpaceMarines)]
     BlackTemplars = 3984380624,
     [Government(Government.SpaceMarines)]
-    BloodAngels = 3984380624,
+    BloodAngels = 1320453649,
     [Government(Government.SpaceMarines)]
     DarkAngels = 1176910732,
     [Government(Government.SpaceMarines)]

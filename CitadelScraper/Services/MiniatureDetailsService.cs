@@ -35,6 +35,22 @@ public class MiniatureDetailsService
         return processedMiniatures;
     }
 
+    public async Task<IEnumerable<MiniatureDetails>> GetMiniaturesAsync(Government government)
+    {
+        await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
+
+        var links = await _linkService.FetchLinksAsync(government);
+
+        var batches = PartitionUrls(links, _partitions);
+
+        var processTasks = batches.Select(ProcessBatchAsync);
+
+        var processedBatches = await Task.WhenAll(processTasks);
+        var processedMiniatures = processedBatches.SelectMany(x => x).ToList();
+
+        return processedMiniatures;
+    }
+
     private async Task<IEnumerable<MiniatureDetails>> ProcessBatchAsync(IEnumerable<string> urlBatch, int batchIndex)
     {
         Console.WriteLine($"Beginning batch {batchIndex}");

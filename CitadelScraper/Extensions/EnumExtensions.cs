@@ -12,13 +12,32 @@ public static class EnumExtensions
 
         return governmentAttribute.Government;
     }
+
     public static GameType GetGameType(this Faction faction)
     {
         var government = GetGovernment(faction);
 
+        return government.GetGameType();
+    }
+
+    public static GameType GetGameType(this Government government)
+    {
         var gameTypeAttribute = government.GetCustomAttribute<GameTypeAttribute>();
 
         return gameTypeAttribute.GameType;
+    }
+
+    public static Faction[] GetFactions(this Government government)
+    {
+        var factions = typeof(Faction)
+            .GetFields()
+            .Where(x =>
+                x.GetCustomAttribute<GovernmentAttribute>()?
+                    .Government == government)
+            .Select(x => x.GetValue(null)).Cast<Faction>()
+            .ToArray();
+
+        return factions;
     }
 
     private static TAttr GetCustomAttribute<TAttr>(this Enum enumVal)
