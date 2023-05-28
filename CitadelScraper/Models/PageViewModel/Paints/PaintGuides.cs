@@ -1,4 +1,4 @@
-﻿namespace CitadelScraper.Models.PageViewModel;
+﻿namespace CitadelScraper.Models.PageViewModel.Paints;
 
 public class PaintGuides
 {

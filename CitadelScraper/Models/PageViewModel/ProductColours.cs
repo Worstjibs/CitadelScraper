@@ -1,4 +1,6 @@
-﻿namespace CitadelScraper.Models.PageViewModel;
+﻿using CitadelScraper.Models.PageViewModel.Paints;
+
+namespace CitadelScraper.Models.PageViewModel;
 
 public class ProductColours
 {

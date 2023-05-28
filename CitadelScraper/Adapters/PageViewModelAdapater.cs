@@ -1,6 +1,8 @@
 ﻿using CitadelScraper.Contracts.Services;
 using CitadelScraper.Models.Miniature;
 using CitadelScraper.Models.PageViewModel;
+using CitadelScraper.Models.PageViewModel.Paints;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace CitadelScraper.Adapters;
@@ -68,16 +70,48 @@ public class PageViewModelAdapater : IPageViewModelAdapater
 
     private MiniaturePaintEffect MapPaintEffect(PaintEffect paintEffect)
     {
-        return new MiniaturePaintEffect
+        var miniaturePaintEffect = new MiniaturePaintEffect
         {
             Name = paintEffect.Name,
-            ImageUrl = paintEffect.ImageUrl,
-            Paints = paintEffect.Paints
-                .Select(x => new MiniaturePaint
-                {
-                    ImageName = x.ImageName,
-                    ProductId = x.ProductId
-                })
+            ImageUrl = paintEffect.ImageUrl
         };
+
+        if (!paintEffect.Paints.Any())
+            return miniaturePaintEffect;
+
+        Action<Dictionary<string, MiniaturePaintLevel>, string[], MiniaturePaintLevel> insertIntoDictionary = (dict, productIds, level) =>
+        {
+            foreach (var productId in productIds)
+            {
+                dict[productId] = level;
+            }
+        };
+
+        var levelDict = new Dictionary<string, MiniaturePaintLevel>();
+
+        var splitPaints = paintEffect.UrlParam.Split('-');
+
+        if (splitPaints.Length == 2)
+        {
+            var battleReady = splitPaints[0].Split(',');
+            var paradeReady = splitPaints[1].Split(',');
+
+            insertIntoDictionary(levelDict, battleReady, MiniaturePaintLevel.BattleReady);
+            insertIntoDictionary(levelDict, paradeReady, MiniaturePaintLevel.ParadeReady);
+
+            if (battleReady.Any(string.IsNullOrWhiteSpace) || paradeReady.Any(string.IsNullOrWhiteSpace))
+                Console.WriteLine("Issue here!");
+        }
+
+        miniaturePaintEffect.Paints = paintEffect.Paints
+            .Where(x => x.ProductId is not null && x.ImageName is not null)
+            .Select(x => new MiniaturePaint
+            {
+                ImageName = x.ImageName!,
+                ProductId = x.ProductId!,
+                Level = levelDict[x.ProductId!]
+            }).ToList();
+
+        return miniaturePaintEffect;
     }
 }
