@@ -1,6 +1,6 @@
-﻿using CitadelScraper.Models;
+﻿using CitadelScraper.Models.PageViewModel;
 
-namespace CitadelScraper;
+namespace CitadelScraper.Models.Miniature;
 
 public class MiniatureDetails
 {
@@ -8,8 +8,8 @@ public class MiniatureDetails
     public string Description { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
 
-    public ProductImage[] Images = Array.Empty<ProductImage>();
-    public PaintMethods? PaintMethods { get; set; }
+    public MiniatureProductImage[] Images = Array.Empty<MiniatureProductImage>();
+    public MiniaturePaintMethods? PaintMethods { get; set; }
 
     public override string? ToString()
     {

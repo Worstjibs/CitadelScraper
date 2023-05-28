@@ -1,22 +1,29 @@
-﻿using CitadelScraper.Adapters;
-using CitadelScraper.Contracts;
+﻿using CitadelScraper.Contracts.Adapaters;
+using CitadelScraper.Contracts.Services;
 using CitadelScraper.Enums;
-using CitadelScraper.Models;
-using HtmlAgilityPack;
+using CitadelScraper.Models.Miniature;
+using CitadelScraper.Models.PageViewModel;
 using PuppeteerSharp;
 using System.Text.Json;
 
 namespace CitadelScraper.Services;
 
-public class MiniatureDetailsService
+public class CitadelScraperService : ICitadelScraperService
 {
     private const int _partitions = 10;
 
     private readonly IProductLinkService _linkService;
+    private readonly IProductInfoPageContentService _productInfoPageContentService;
+    private readonly IPageViewModelAdapater _pageViewModelAdapater;
 
-    public MiniatureDetailsService(IProductLinkService linkService)
+    public CitadelScraperService(
+        IProductLinkService linkService,
+        IProductInfoPageContentService productInfoPageContentService,
+        IPageViewModelAdapater pageViewModelAdapater)
     {
         _linkService = linkService;
+        _productInfoPageContentService = productInfoPageContentService;
+        _pageViewModelAdapater = pageViewModelAdapater;
     }
 
     public async Task<IEnumerable<MiniatureDetails>> GetMiniaturesAsync(Faction faction)
@@ -78,24 +85,7 @@ public class MiniatureDetailsService
         {
             try
             {
-                Console.WriteLine("Beginning scraping for {0}", url);
-
-                await page.SetUserAgentAsync("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36");
-                await page.GoToAsync($"https://www.games-workshop.com/en-GB/{url}?format=json");
-
-                var content = await page.GetContentAsync();
-
-                Console.WriteLine("Fetched json content from {0}", url);
-
-                Console.WriteLine("Beginning Deserializing json content for {0}", url);
-
-                var doc = new HtmlDocument();
-                doc.LoadHtml(content);
-
-                var jsonContent = doc.DocumentNode
-                    .Descendants("pre")
-                    .First()
-                    .InnerHtml;
+                var jsonContent = await _productInfoPageContentService.GetProductPageContentAsync(page, url);
 
                 var jsonParsed = JsonSerializer.Deserialize<PageSlotViewModel>(jsonContent, new JsonSerializerOptions
                 {
@@ -106,7 +96,7 @@ public class MiniatureDetailsService
 
                 Console.WriteLine("Beginning mapping to MiniatureDetails for {0}", url);
 
-                var details = new PageViewModelAdapater().ToMiniatureDetails(jsonParsed!);
+                var details = _pageViewModelAdapater.ToMiniatureDetails(jsonParsed!);
 
                 Console.WriteLine("Finished mapping to MiniatureDetails {0}", url);
 

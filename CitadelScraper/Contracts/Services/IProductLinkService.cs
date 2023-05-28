@@ -1,6 +1,6 @@
 ﻿using CitadelScraper.Enums;
 
-namespace CitadelScraper.Contracts;
+namespace CitadelScraper.Contracts.Services;
 
 public interface IProductLinkService
 {

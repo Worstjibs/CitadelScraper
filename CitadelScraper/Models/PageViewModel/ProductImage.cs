@@ -1,4 +1,4 @@
-﻿namespace CitadelScraper.Models;
+﻿namespace CitadelScraper.Models.PageViewModel;
 
 public class ProductImage
 {

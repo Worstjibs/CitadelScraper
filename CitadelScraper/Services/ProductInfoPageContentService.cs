@@ -1,11 +1,12 @@
-﻿using HtmlAgilityPack;
+﻿using CitadelScraper.Contracts.Services;
+using HtmlAgilityPack;
 using PuppeteerSharp;
 
 namespace CitadelScraper.Services;
 
-internal class ProductInfoPageContentService
+internal class ProductInfoPageContentService : IProductInfoPageContentService
 {
-    public async Task<string?> GetProductPageContentAsync(IPage page, string url)
+    public async Task<string> GetProductPageContentAsync(IPage page, string url)
     {
         Console.WriteLine("Beginning scraping for {0}", url);
 
@@ -20,10 +21,17 @@ internal class ProductInfoPageContentService
         var doc = new HtmlDocument();
         doc.LoadHtml(content);
 
-        var jsonContent = doc.DocumentNode
+        var preElement = doc.DocumentNode
             .Descendants("pre")
-            .First()
-            .InnerHtml;
+            .FirstOrDefault();
+
+        if (preElement is null)
+            throw new HtmlWebException("No pre element on page");
+
+        var jsonContent = preElement.InnerHtml;
+
+        if (jsonContent is null)
+            throw new HtmlWebException("pre element contains no content");
 
         return jsonContent;
     }

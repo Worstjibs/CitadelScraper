@@ -1,17 +1,14 @@
-﻿using CitadelScraper.Contracts;
+﻿using CitadelScraper.Contracts.Services;
 using CitadelScraper.Enums;
 using CitadelScraper.Extensions;
-using CitadelScraper.Models;
+using CitadelScraper.Models.PageViewModel;
 using HtmlAgilityPack;
 using PuppeteerSharp;
-using System;
-using System.Linq;
-using System.Security.AccessControl;
 using System.Text.Json;
 
 namespace CitadelScraper.Services;
 
-public class ProductLinkService : IProductLinkService
+internal class ProductLinkService : IProductLinkService
 {
     public async Task<IEnumerable<string>> FetchLinksAsync(Faction faction)
     {

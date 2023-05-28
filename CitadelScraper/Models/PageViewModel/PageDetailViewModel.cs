@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CitadelScraper.Models;
+namespace CitadelScraper.Models.PageViewModel;
 
 public class PageDetailViewModel
 {
